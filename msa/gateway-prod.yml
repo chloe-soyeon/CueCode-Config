@@ -42,14 +42,15 @@ spring:
 
 jwt:
   token:
+    creator: cuecoder           # issuer 등 메타
     access:
       valid:
-        time: '300'            # Access Token 유효 시간 (초) → 300초 = 5분
-      name: jwtAccessToken     # Access Token 쿠키/헤더 이름
+        time: '300'             # 5분
+      name: jwtAccessToken
     refresh:
       valid:
-        time: '3000'           # Refresh Token 유효 시간 (초) → 3000초 = 50분
-      name: jwtRefreshToken    # Refresh Token 쿠키/헤더 이름
-    creator: poly              # JWT 발급자(issuer) 메타 정보
+        time: '3000'            # ~50분(예시)
+      name: jwtRefreshToken
   secret:
-    key: 'nzY9wxPMYKtjiQ1kxz03wDkPSFp1ypyfbeuTMWCdAjY='  # JWT 서명용 시크릿 키 (Base64 인코딩, 개발용)
+    # 게이트웨이와 동일 키 사용 (개발용 기본값, 운영은 env로 교체)
+    key: 'nzY9wxPMYKtjiQ1kxz03wDkPSFp1ypyfbeuTMWCdAjY='  # Base64 인코딩된 HS256 시크릿(개발용)
