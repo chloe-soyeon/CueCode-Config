@@ -1,0 +1,65 @@
+# ================================
+# USER-SERVICE (prod) - Config
+# ================================
+
+server:
+  port: 11000                   # 유저 서비스 포트
+  shutdown: graceful            # 요청 마무리 후 정상 종료
+
+spring:
+  application:
+    name: USER-SERVICE          # Eureka/Config 서비스 이름
+  data:
+    mongodb:
+      host: 192.168.117.128   # MongoDB 서버 IP
+      port: 27017             # MongoDB 포트
+      database: MyDB          # 사용할 DB 이름
+      username: myUser        # MongoDB 사용자명
+      password: 1234          # MongoDB 비밀번호
+      auto-index-creation: true        # 인덱스 자동 생성 여부
+      uuid-representation: standard    # UUID 표현 방식
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"            # 운영에선 "health,info" 정도만 권장
+  endpoint:
+    shutdown:
+      enabled: true
+    health:
+      show-details: always
+    beans:
+      enabled: true
+    info:
+      enabled: true
+  info:
+    env:
+      enabled: true
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+jwt:
+  token:
+    creator: cuecoder           # issuer 등 메타
+    access:
+      valid:
+        time: '300'             # 5분
+      name: jwtAccessToken
+    refresh:
+      valid:
+        time: '3000'            # ~50분(예시)
+      name: jwtRefreshToken
+  secret:
+    # 게이트웨이와 동일 키 사용 (개발용 기본값, 운영은 env로 교체)
+    key: 'nzY9wxPMYKtjiQ1kxz03wDkPSFp1ypyfbeuTMWCdAjY='  # Base64 인코딩된 HS256 시크릿(개발용)
+
+logging:
+  level:
+    root: INFO
+    org.springframework.data.mongodb: INFO

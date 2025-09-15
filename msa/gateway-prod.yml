@@ -1,0 +1,55 @@
+# =========================================
+# API-GATEWAY (prod) - Spring Cloud Config
+# =========================================
+
+server:
+  port: 13000                  # 게이트웨이 서버 실행 포트
+  shutdown: graceful           # Graceful Shutdown (요청 처리 후 정상 종료)
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'           # 모든 Actuator 엔드포인트 노출 (운영 환경에선 health, info 권장)
+  endpoint:
+    health:
+      enabled: 'true'          # /actuator/health 활성화
+      show-details: always     # health 상세 정보 표시 (ex. DB, Eureka 상태)
+    beans:
+      enabled: true            # /actuator/beans 활성화
+    info:
+      enabled: true            # /actuator/info 활성화
+    shutdown:
+      enabled: true            # /actuator/shutdown 활성화 (POST 호출 시 앱 종료)
+  server:
+    address: localhost         # Actuator 관리 서버 바인딩 주소
+    port: '13001'              # Actuator 관리 서버 포트 (메인 서버와 별도 관리)
+
+eureka:
+  client:
+    register-with-eureka: 'true'      # Eureka 서버에 자신(API Gateway) 등록
+    service-url:
+      defaultZone: http://localhost:8761/eureka   # Eureka 서버 주소
+    fetch-registry: 'true'            # 다른 서비스 레지스트리 정보 가져오기
+
+spring:
+  application:
+    name: API-GATEWAY          # 서비스 이름 (Eureka에 등록되는 ID)
+  boot:
+    admin:
+      client:
+        url: http://localhost:15000   # Spring Boot Admin 서버 URL (모니터링용)
+
+jwt:
+  token:
+    access:
+      valid:
+        time: '300'            # Access Token 유효 시간 (초) → 300초 = 5분
+      name: jwtAccessToken     # Access Token 쿠키/헤더 이름
+    refresh:
+      valid:
+        time: '3000'           # Refresh Token 유효 시간 (초) → 3000초 = 50분
+      name: jwtRefreshToken    # Refresh Token 쿠키/헤더 이름
+    creator: poly              # JWT 발급자(issuer) 메타 정보
+  secret:
+    key: 'nzY9wxPMYKtjiQ1kxz03wDkPSFp1ypyfbeuTMWCdAjY='  # JWT 서명용 시크릿 키 (Base64 인코딩, 개발용)
