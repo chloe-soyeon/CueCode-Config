@@ -1,0 +1,68 @@
+# ================================
+# USER-SERVICE (dev) - Spring Config
+# 목적: 개발/로컬 테스트용. 로그·Actuator 전면 개방, CORS 완화, 긴 토큰 만료시간.
+# ================================
+spring:
+  application:
+    name: USER-SERVICE                 # Config Server에서 식별할 앱 이름
+  config:
+    activate:
+      on-profile: dev                  # 이 파일은 dev 프로필에서만 활성화
+  data:
+    mongodb:
+      # ▶ 개발 환경 예시 1) 원격 NodePort 사용 (네가 올려둔 IP/포트)
+      host: 223.130.134.180           # MongoDB 서버 IP (개발용 원격/NodePort)
+      port: 30000                     # MongoDB 포트 (NodePort)
+      database: MyDB                  # 사용할 DB 이름
+      username: poly                # MongoDB 사용자명 (개발용 계정)
+      password: poly1234                  # MongoDB 비밀번호 (개발용 비밀)
+      auto-index-creation: true       # 스키마 변경 시 인덱스 자동 생성 (개발 편의)
+      uuid-representation: standard   # UUID 표준 표현
+      # ▶ 개발 환경 예시 2) 로컬 Docker/Mongo 사용 시 (위 블록 대신 아래를 쓰세요)
+      # host: localhost
+      # port: 27017
+      # database: MyDB
+      # username: devUser
+      # password: devPass
+
+server:
+  port: 11000                          # 유저 서비스 HTTP 포트
+  shutdown: graceful                   # 요청 마무리 후 정상 종료
+
+management:
+  server:
+    address: localhost                 # Actuator를 로컬에서만 노출
+    port: 11001                        # Actuator 포트(앱 포트와 분리)
+  endpoints:
+    web:
+      exposure:
+        include: "*"                   # 개발은 전부 노출(beans/env 등) — 운영 금지
+  endpoint:
+    health:
+      show-details: always             # 상세 헬스 정보 표시
+    shutdown:
+      enabled: true                    # /actuator/shutdown 허용 (개발 편의)
+  info:
+    env:
+      enabled: true
+
+logging:
+  level:
+    root: DEBUG
+    org.springframework.data.mongodb: DEBUG
+
+# JWT (개발) — 게이트웨이/다른 서비스와 '동일한 HS256 키'를 사용해야 검증 가능
+jwt:
+  token:
+    creator: cuecoder
+    access:
+      valid:
+        time: "600"                    # Access Token 10분
+      name: jwtAccessToken
+    refresh:
+      valid:
+        time: "7200"                   # Refresh Token 2시간
+      name: jwtRefreshToken
+  secret:
+    # ⚠️ 개발 전용 키 — 운영에 반입 금지! (32바이트 이상 Base64 권장)
+    key: "XwD1Y2Z4bX9tE4jF7kP5o9rR0sU2v3wA8zB7C6E5D4G3H2I1J0K9L8M7N6O5P4Q3R2S1T0UvWxYzA"
