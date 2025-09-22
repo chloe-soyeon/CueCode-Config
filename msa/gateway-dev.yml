@@ -77,4 +77,4 @@ jwt:
   secret:
     # HS256용 32바이트 이상을 Base64로 권장 (예: openssl rand -base64 32)
     # ⚠️ 개발 전용 키 — 절대 운영에 반입 금지!
-    key: "XwD1Y2Z4bX9tE4jF7kP5o9rR0sU2v3wA8zB7C6E5D4G3H2I1J0K9L8M7N6O5P4Q3R2S1T0UvWxYzA"
+    key: "Ixp3HCXOS5Hi0py81JF610NG5nvySPjBq3VQXPmwsLI="
