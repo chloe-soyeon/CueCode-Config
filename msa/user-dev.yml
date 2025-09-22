@@ -25,7 +25,7 @@ spring:
       # database: MyDB
       # username: devUser
       # password: devPass
-      uri: "mongodb://poly:poly1234@223.130.134.180:30000/MyDB?authSource=admin"
+      uri: "mongodb://poly:poly1234@223.130.134.180:30000/MyDB?authSource=MyDB"
       auto-index-creation: true
       uuid-representation: standard
 
