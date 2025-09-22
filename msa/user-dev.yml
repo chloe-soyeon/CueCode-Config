@@ -16,6 +16,7 @@ spring:
       database: MyDB                  # 사용할 DB 이름
       username: poly                # MongoDB 사용자명 (개발용 계정)
       password: poly1234                  # MongoDB 비밀번호 (개발용 비밀)
+      authentication-database: MyDB
       auto-index-creation: true       # 스키마 변경 시 인덱스 자동 생성 (개발 편의)
       uuid-representation: standard   # UUID 표준 표현
       # ▶ 개발 환경 예시 2) 로컬 Docker/Mongo 사용 시 (위 블록 대신 아래를 쓰세요)
