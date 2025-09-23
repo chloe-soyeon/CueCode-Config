@@ -63,8 +63,8 @@ management:
 
 logging:
   level:
-    root: DEBUG
-    org.springframework.cloud.gateway: DEBUG  # 라우팅/필터 흐름 디버깅에 유용
+    root: INFO
+    org.springframework.cloud.gateway: INFO  # 라우팅/필터 흐름 디버깅에 유용
 
 # CORS (개발용 완화 설정) — 프론트 로컬 도메인 허용
 #cors:

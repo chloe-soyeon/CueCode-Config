@@ -52,8 +52,8 @@ management:
 
 logging:
   level:
-    root: DEBUG
-    org.springframework.data.mongodb: DEBUG
+    root: INFO
+    org.springframework.data.mongodb: INFO
 
 # JWT (개발) — 게이트웨이/다른 서비스와 '동일한 HS256 키'를 사용해야 검증 가능
 jwt:
