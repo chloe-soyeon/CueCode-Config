@@ -10,22 +10,7 @@ spring:
       on-profile: dev                  # 이 파일은 dev 프로필에서만 활성화
   data:
     mongodb:
-      # ▶ 개발 환경 예시 1) 원격 NodePort 사용 (네가 올려둔 IP/포트)
-#      host: 223.130.134.180           # MongoDB 서버 IP (개발용 원격/NodePort)
-#      port: 30000                     # MongoDB 포트 (NodePort)
-#      database: MyDB                  # 사용할 DB 이름
-#      username: poly                # MongoDB 사용자명 (개발용 계정)
-#      password: poly1234                  # MongoDB 비밀번호 (개발용 비밀)
-#      authentication-database: MyDB
-#      auto-index-creation: true       # 스키마 변경 시 인덱스 자동 생성 (개발 편의)
-#      uuid-representation: standard   # UUID 표준 표현
-      # ▶ 개발 환경 예시 2) 로컬 Docker/Mongo 사용 시 (위 블록 대신 아래를 쓰세요)
-      # host: localhost
-      # port: 27017
-      # database: MyDB
-      # username: devUser
-      # password: devPass
-      uri: "mongodb://poly:poly1234@223.130.134.180:30000/myDB?authSource=myDB"
+      uri: "mongodb://poly:poly1234@223.130.134.180:30000/user_db?authSource=user_db"
       auto-index-creation: true
       uuid-representation: standard
 
