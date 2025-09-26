@@ -15,6 +15,7 @@ spring:
       auto-index-creation: true
       uuid-representation: standard
 
+
 server:
   port: 11000                          # 유저 서비스 HTTP 포트
   shutdown: graceful                   # 요청 마무리 후 정상 종료
