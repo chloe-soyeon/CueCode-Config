@@ -1,0 +1,11 @@
+server:
+  port: 15000
+
+spring:
+  application:
+    name: motion-service
+  data:
+    mongodb:
+      uri: mongodb://poly:poly1234@localhost:27017/motionDB?authSource=motionDB
+      auto-index-creation: true
+      uuid-representation: standard

@@ -1,0 +1,73 @@
+# ================================
+# USER-SERVICE (dev) - Spring Config
+# 목적: 개발/로컬 테스트용. 로그·Actuator 전면 개방, CORS 완화, 긴 토큰 만료시간.
+# ================================
+spring:
+  application:
+    name: USER-SERVICE                 # Config Server에서 식별할 앱 이름
+  config:
+    activate:
+      on-profile: dev                  # 이 파일은 dev 프로필에서만 활성화
+  data:
+    mongodb:
+      uri: "mongodb://poly:${DB_PASSWORD}@localhost:30000/userDB?authSource=userDB"
+      auto-index-creation: true
+      uuid-representation: standard
+  mail:
+    host: smtp.naver.com
+    port: 465
+    username: ruby129@naver.com
+    password: ${MAIL_PASSWORD}
+    protocol: smtps
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: false
+          ssl:
+            enable: true
+            trust: smtp.naver.com
+
+server:
+  port: 11000                          # 유저 서비스 HTTP 포트
+  shutdown: graceful                   # 요청 마무리 후 정상 종료
+
+management:
+  server:
+    address: localhost                 # Actuator를 로컬에서만 노출
+    port: 11001                        # Actuator 포트(앱 포트와 분리)
+  endpoints:
+    web:
+      exposure:
+        include: "*"                   # 개발은 전부 노출(beans/env 등) — 운영 금지
+  endpoint:
+    health:
+      show-details: always             # 상세 헬스 정보 표시
+    shutdown:
+      enabled: true                    # /actuator/shutdown 허용 (개발 편의)
+  info:
+    env:
+      enabled: true
+
+logging:
+  level:
+    root: INFO
+    org.springframework.data.mongodb: INFO
+
+# JWT (개발) — 게이트웨이/다른 서비스와 '동일한 HS256 키'를 사용해야 검증 가능
+jwt:
+  token:
+    creator: cuecoder
+    access:
+      valid:
+        time: "600"                    # Access Token 10분
+      name: jwtAccessToken
+    refresh:
+      valid:
+        time: "7200"                   # Refresh Token 2시간
+      name: jwtRefreshToken
+  secret:
+    # ⚠️ 개발 전용 키 — 운영에 반입 금지! (32바이트 이상 Base64 권장)
+    key: "Ixp3HCXOS5Hi0py81JF610NG5nvySPjBq3VQXPmwsLI="

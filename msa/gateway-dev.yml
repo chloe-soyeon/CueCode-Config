@@ -1,0 +1,91 @@
+# =========================================
+# API-GATEWAY (dev) - Spring Cloud Config
+# 목적: 개발/로컬 테스트용. 로그·Actuator 전면 개방, CORS 완화, 긴 토큰 만료시간.
+# =========================================
+spring:
+  application:
+    name: API-GATEWAY            # Config/로그 식별용 서비스명
+  config:
+    activate:
+      on-profile: dev            # 이 파일은 dev 프로필에서만 활성화
+  cloud:
+    discovery:
+      enabled: false             # Eureka 등 DiscoveryClient 비활성화
+    gateway:
+      routes:                    # 게이트웨이 라우팅 규칙 (K8s DNS 사용)
+        # ─────────────────────────────────────────────────────────
+        # [user 서비스 라우트]
+        # - 외부에서 /user/** 로 들어온 요청을
+        # - K8s 내부의 user-svc(포트 11000)로 포워딩한다.
+        # - FQDN은 네임스페이스가 default일 때 예시이며,
+        #   같은 네임스페이스라면 http://user-svc:11000 으로 줄여써도 됨.
+        # ─────────────────────────────────────────────────────────
+        - id: user
+
+          uri: http://localhost:11000
+#          uri: http://user-svc.default.svc.cluster.local:11000
+          predicates:
+            - Path=/user/**
+          filters:
+            - StripPrefix=1               # UserService에 /user prefix 없을 경우만
+          # 백엔드 컨트롤러가 /user 프리픽스 없이 노출된다면 프리픽스 제거
+          # (예: 게이트웨이 /user/profile  → 백엔드 /profile)
+          # filters:
+          #   - StripPrefix=1
+          #   또는 정규식으로:
+          #   - RewritePath=/user/(?<p>.*), /${p}
+      globalcors: # ✅ CORS는 여기로!
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:3000,http://127.0.0.1:3000"
+            allowedMethods: "GET,POST,PUT,DELETE,OPTIONS"
+            allowedHeaders: "*"
+            allowCredentials: true
+
+server:
+  port: 13000                    # 게이트웨이 HTTP 포트
+  shutdown: graceful             # 요청 처리 후 정상 종료 (개발 편의)
+
+management:
+  server:
+    address: localhost           # Actuator를 로컬에서만 노출 (개발)
+    port: 13001                  # Actuator 포트(서버와 분리)
+  endpoints:
+    web:
+      exposure:
+        include: "*"             # 개발은 전부 노출(beans, env 등) — 운영에선 금지!
+  endpoint:
+    health:
+      enabled: true
+      show-details: always       # 상세 헬스 정보 표시 (개발 디버깅용)
+    shutdown:
+      enabled: true              # /actuator/shutdown 허용 (개발 편의)
+
+logging:
+  level:
+    root: INFO
+    org.springframework.cloud.gateway: INFO  # 라우팅/필터 흐름 디버깅에 유용
+
+# CORS (개발용 완화 설정) — 프론트 로컬 도메인 허용
+#cors:
+#  allowed-origins: "http://localhost:3000,http://127.0.0.1:3000"
+#  allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
+#  allowed-headers: "*"
+#  allow-credentials: true
+
+# JWT (개발용) — 게이트웨이와 토큰 발급/검증 서비스가 '동일한 키'를 사용해야 함
+jwt:
+  token:
+    creator: cuecoder            # iss 등 메타로 활용 가능
+    access:
+      valid:
+        time: "600"              # Access Token 유효시간(초) — 10분
+      name: jwtAccessToken
+    refresh:
+      valid:
+        time: "7200"             # Refresh Token 유효시간(초) — 2시간
+      name: jwtRefreshToken
+  secret:
+    # HS256용 32바이트 이상을 Base64로 권장 (예: openssl rand -base64 32)
+    # ⚠️ 개발 전용 키 — 절대 운영에 반입 금지!
+    key: "Ixp3HCXOS5Hi0py81JF610NG5nvySPjBq3VQXPmwsLI="

@@ -1,0 +1,67 @@
+# ================================
+# USER-SERVICE (prod) - Spring Config
+# 목적: 운영/실서비스용. 최소 노출·보안 강화·환경변수/시크릿 기반 주입.
+# ================================
+spring:
+  application:
+    name: USER-SERVICE                 # Config Server에서 식별할 앱 이름
+  config:
+    activate:
+      on-profile: prod                 # 이 파일은 prod 프로필에서만 활성화
+  data:
+    mongodb:
+      # ▶ 운영: 하드코딩 금지. 환경변수/시크릿로 주입!
+      #  - K8s라면 Service FQDN 사용 권장 (예: mongo-svc.default.svc.cluster.local)
+      host: ${MONGO_HOST:mongo-svc.default.svc.cluster.local}
+      port: ${MONGO_PORT:27017}
+      database: ${MONGO_DB:mydb}
+      username: ${MONGO_USER}          # 시크릿/환경변수로만 주입
+      password: ${MONGO_PASSWORD}      # 시크릿/환경변수로만 주입
+      auto-index-creation: true        # 필요한 컬렉션에 한해 사용. 대규모 트래픽 시 주의
+      uuid-representation: standard
+      # ※ 복제셋/옵션이 많다면 uri 사용을 고려:
+      # spring.data.mongodb.uri: ${MONGODB_URI}
+
+server:
+  port: 11000                          # 유저 서비스 HTTP 포트
+  shutdown: graceful                   # 롤링 업데이트/무중단 배포에 유리
+
+management:
+  server:
+    address: 0.0.0.0                   # 컨테이너/K8s 환경: 모든 인터페이스 바인딩
+    port: 11001                        # Actuator 포트 (외부 노출은 Service/NetworkPolicy로 제어)
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - info
+          - prometheus                 # Prometheus 사용 시에만
+  endpoint:
+    health:
+      show-details: when_authorized    # 인증된 호출만 상세 정보
+    shutdown:
+      enabled: false                   # 운영 종료 엔드포인트 차단
+  info:
+    env:
+      enabled: false                   # 민감 정보 노출 방지 (필요 시 true)
+
+logging:
+  level:
+    root: INFO
+    org.springframework.data.mongodb: INFO
+
+# JWT (운영) — 절대 깃에 저장하지 말고 환경변수/시크릿로만 주입
+jwt:
+  token:
+    creator: cuecoder
+    access:
+      valid:
+        time: "300"                    # Access Token 5분 (짧게 유지 권장)
+      name: jwtAccessToken
+    refresh:
+      valid:
+        time: "3600"                   # Refresh Token 1시간
+      name: jwtRefreshToken
+  secret:
+    key: ${JWT_SECRET}                 # 예: K8s Secret, Vault, NCP Secret Manager 등
