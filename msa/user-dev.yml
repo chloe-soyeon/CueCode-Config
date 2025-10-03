@@ -13,6 +13,8 @@ spring:
       uri: "mongodb://poly:${DB_PASSWORD}@localhost:30000/userDB?authSource=userDB"
       auto-index-creation: true
       uuid-representation: standard
+    redis:
+      uri: "redis://:${REDIS_PASSWORD}@user-redisdb:6379"
   mail:
     host: smtp.naver.com
     port: 465
