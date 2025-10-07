@@ -21,7 +21,7 @@ spring:
       uuid-representation: standard
 
 # 운영 환경 로깅 설정
-logging:dlwp anjgkwl
+logging:
   level:
     root: INFO
     org.springframework.web: INFO
