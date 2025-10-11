@@ -6,6 +6,6 @@ spring:
     name: motion-service
   data:
     mongodb:
-      uri: mongodb://poly:poly1234@localhost:27017/motionDB?authSource=motionDB
+      uri: mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@motion-mongodb-service:27017/motionDB?authSource=motionDB
       auto-index-creation: true
       uuid-representation: standard
