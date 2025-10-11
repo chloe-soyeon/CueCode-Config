@@ -9,3 +9,14 @@ spring:
       uri: mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@motion-mongodb-service:27017/motionDB?authSource=motionDB
       auto-index-creation: true
       uuid-representation: standard
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
