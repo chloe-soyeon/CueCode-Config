@@ -14,7 +14,7 @@ spring:
       auto-index-creation: true
       uuid-representation: standard
     redis:
-      uri: "redis://:${REDIS_PASSWORD}@user-redisdb:6379"
+      uri: "redis://:${REDIS_PASSWORD}@localhost:6379"
   mail:
     host: smtp.naver.com
     port: 465
