@@ -10,7 +10,7 @@ spring:
       on-profile: dev                  # 이 파일은 dev 프로필에서만 활성화
   data:
     mongodb:
-      uri: "mongodb://poly:${DB_PASSWORD}@localhost:27017/userDB?authSource=userDB"
+      uri: "mongodb://poly:${DB_PASSWORD}@localhost:30000/userDB?authSource=userDB"
       auto-index-creation: true
       uuid-representation: standard
     redis:
