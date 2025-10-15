@@ -14,11 +14,17 @@ spring:
       on-profile: prod # 이 파일은 prod 프로필에서만 활성화됩니다.
   data:
     mongodb:
-      # K8s 내부 DNS 이름을 사용합니다. (예: 'motion-mongodb-prod.datastore.svc.cluster.local')
+      # K8s 내부 DNS 이름을 사용합니다. (예: '''motion-mongodb.default.svc.cluster.local''')
       # 사용자 이름과 비밀번호는 K8s Secret을 통해 환경변수(MONGO_USER, MONGO_PASSWORD)로 주입받습니다.
-      uri: mongodb://${MONGO_USER}:${MONGO_PASSWORD}@motion-mongodb-prod:27017/motionDBProd?authSource=admin
+      # --- [수정됨] '''motion-mongodb-prod''' -> '''motion-mongodb''' ---
+      uri: mongodb://${MONGO_USER}:${MONGO_PASSWORD}@motion-mongodb:27017/motionDBProd?authSource=admin
       auto-index-creation: false # 운영에서는 성능을 위해 인덱스를 수동으로 관리하는 것을 권장합니다.
       uuid-representation: standard
+    # --- [추가됨] Redis 설정 ---
+    redis:
+      host: motion-redisdb
+      port: 6379
+      password: ${REDIS_PASSWORD}
 
 # 운영 환경 로깅 설정
 logging:
@@ -35,4 +41,4 @@ management:
         include: health,info,prometheus # 헬스체크, 기본정보, 모니터링 메트릭만 노출
   endpoint:
     health:
-      show-details: when-authorized
+      show-details: when-authorized # 인증된 호출에 한해 상세 정보 제공
